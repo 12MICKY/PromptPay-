@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="PromptPay QR">
+  <meta name="theme-color" content="#353433">
+  <title>PromptPay QR</title>
+  <link rel="manifest" href="./manifest.json">
+  <link rel="stylesheet" href="./styles.css">
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script defer src="./app.js"></script>
+</head>
+<body>
+  <main class="app-shell">
+    <section class="viewer">
+      <div class="flipper">
+        <div class="qr-box">
+          <div id="qrcode"></div>
+        </div>
+      </div>
+    </section>
+
+    <p class="qr-caption">
+      QR code นี้ของ <strong id="ownerText">PromptPay ID</strong>
+    </p>
+    <p id="statusText" class="status"></p>
+
+    <form id="promptpay-form" class="form">
+      <label class="field">
+        <span>PromptPay ID</span>
+        <input
+          class="input-field"
+          id="targetValue"
+          name="targetValue"
+          type="text"
+          inputmode="numeric"
+          placeholder="0812345678 หรือ 1234567890123"
+          autocomplete="off"
+          required
+        >
+      </label>
+
+      <div class="amount-title">กรอกจำนวนเงิน</div>
+
+      <label class="field amount-field">
+        <div class="amount-row">
+          <input
+            class="input-field amount-input"
+            id="amount"
+            name="amount"
+            type="number"
+            min="0"
+            step="0.01"
+            placeholder="0.00"
+          >
+          <strong class="amount-suffix">บาท</strong>
+        </div>
+      </label>
+
+      <button type="submit" class="button">Generate QR</button>
+    </form>
+  </main>
+</body>
+</html>

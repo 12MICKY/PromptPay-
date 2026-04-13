@@ -1,0 +1,10 @@
+{
+  "name": "PromptPay QR",
+  "short_name": "PromptPay",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "lang": "th",
+  "description": "สร้าง QR พร้อมเพย์แบบแอป"
+}
