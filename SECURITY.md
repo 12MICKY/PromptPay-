@@ -2,42 +2,44 @@
 
 ## Supported Versions
 
-โปรเจกต์นี้เป็นเว็บแอปขนาดเล็กและ currently maintained บน branch `main`
+This project is currently maintained on the `main` branch.
 
-เวอร์ชันที่รองรับ:
+Supported version:
 
-- `main` branch: ได้รับการอัปเดตและแก้ไขล่าสุด
+- `main`: actively maintained
 
 ## Reporting a Vulnerability
 
-หากพบช่องโหว่หรือปัญหาด้านความปลอดภัย กรุณาอย่าเปิดเผยรายละเอียดแบบสาธารณะทันทีใน issue
+If you discover a security issue, please do not disclose it publicly right away through a public issue.
 
-แนวทางที่แนะนำ:
+Recommended process:
 
-1. ติดต่อผู้ดูแล repository โดยตรงผ่านช่องทางส่วนตัวที่เจ้าของ repo ระบุไว้
-2. อธิบายปัญหาให้ชัดเจน เช่น
-   - ผลกระทบคืออะไร
-   - ขั้นตอนที่ทำให้เกิดปัญหา
-   - ตัวอย่าง request / input ที่เกี่ยวข้อง
-3. หากมีแนวทางแก้ไขหรือข้อเสนอแนะ สามารถแนบมาพร้อมกันได้
+1. Contact the repository owner privately through an appropriate contact channel.
+2. Clearly describe the issue, including:
+   - what the vulnerability is
+   - what impact it may have
+   - how to reproduce it
+   - any relevant request, input, or deployment context
+3. If you already have a suggested fix or mitigation, include it as well.
 
 ## Scope
 
-หัวข้อที่เกี่ยวข้องกับความปลอดภัยของโปรเจกต์นี้ เช่น:
+Security-related topics for this project may include:
 
-- การตั้งค่า Docker และการเปิดพอร์ต
-- การตั้งค่า Nginx
-- การตั้งค่า Cloudflare Tunnel
-- การใช้งาน service worker / manifest
-- การจัดการ input จากผู้ใช้ในหน้าเว็บ
+- Docker configuration
+- exposed ports and deployment settings
+- Nginx configuration
+- Cloudflare Tunnel configuration
+- service worker and manifest behavior
+- user input handling in the front-end
 
 ## Notes
 
-โปรเจกต์นี้เป็น static web app และไม่มี backend สำหรับเก็บข้อมูลผู้ใช้หรือจัดการ transaction จริง
+This project is currently a static web app and does not include a backend for storing user data or processing real payment transactions.
 
-อย่างไรก็ตาม ยังควรระวังเรื่องต่อไปนี้:
+However, the following points still matter:
 
-- การ deploy บน server ควรใช้ reverse proxy หรือ tunnel ที่ตั้งค่าอย่างเหมาะสม
-- ไม่ควรเปิดสิทธิ์ Docker หรือ system service เกินจำเป็น
-- หากใช้โดเมนจริง ควรเปิด HTTPS เสมอ
-- หากมีการพัฒนาต่อให้มี backend ควรทบทวน security model ใหม่ทั้งหมด
+- deployment should use properly configured reverse proxy or tunnel layers
+- Docker and system-level permissions should not be broader than necessary
+- public deployments should use HTTPS
+- if a backend is added in the future, the security model should be reviewed again in full
