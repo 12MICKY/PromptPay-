@@ -79,7 +79,7 @@ With Docker, the workflow becomes:
 
 ```bash
 docker build -t promptpay-qr-app .
-docker run -d -p 8082:80 promptpay-qr-app
+docker run -d -p HOST_PORT:80 promptpay-qr-app
 ```
 
 That is enough to get the app running.
@@ -258,12 +258,12 @@ This declares that the container serves traffic on port `80`.
 Example:
 
 ```bash
-docker run -p 8082:80 promptpay-qr-app
+docker run -p HOST_PORT:80 promptpay-qr-app
 ```
 
 Meaning:
 
-- host machine uses port `8082`
+- host machine uses `HOST_PORT`
 - container uses port `80`
 
 ## Nginx Configuration Explained
@@ -354,7 +354,7 @@ Explanation:
 ## Run the Container
 
 ```bash
-docker run -d --name promptpay-qr-app -p 8082:80 --restart unless-stopped promptpay-qr-app
+docker run -d --name promptpay-qr-app -p HOST_PORT:80 --restart unless-stopped promptpay-qr-app
 ```
 
 Explanation:
@@ -365,8 +365,8 @@ Explanation:
 - `--name promptpay-qr-app`
   assigns a container name
 
-- `-p 8082:80`
-  maps host port `8082` to container port `80`
+- `-p HOST_PORT:80`
+  maps a host port to container port `80`
 
 - `--restart unless-stopped`
   restarts the container automatically unless it is explicitly stopped
@@ -379,19 +379,19 @@ Explanation:
 If running locally:
 
 ```text
-http://localhost:8082
+http://localhost:HOST_PORT
 ```
 
 If running on a server:
 
 ```text
-http://SERVER_IP:8082
+http://SERVER_IP:HOST_PORT
 ```
 
 Example:
 
 ```text
-http://10.33.1.34:8082
+http://SERVER_IP:HOST_PORT
 ```
 
 ## Run Locally Without Docker
@@ -455,7 +455,7 @@ When the front-end changes:
 ```bash
 docker build -t promptpay-qr-app .
 docker rm -f promptpay-qr-app
-docker run -d --name promptpay-qr-app -p 8082:80 --restart unless-stopped promptpay-qr-app
+docker run -d --name promptpay-qr-app -p HOST_PORT:80 --restart unless-stopped promptpay-qr-app
 ```
 
 This means:
@@ -486,14 +486,14 @@ This project has already been deployed to a real server with this flow:
 
 1. copy the project files to the server
 2. build the Docker image on the server
-3. run the container on port `8082`
-4. point Cloudflare Tunnel to `http://10.33.1.34:8082`
+3. run the container on a chosen host port
+4. point Cloudflare Tunnel or a reverse proxy to `http://SERVER_IP:HOST_PORT`
 
 Example:
 
 ```bash
 sudo docker build -t promptpay-qr-app .
-sudo docker run -d --name promptpay-qr-app -p 8082:80 --restart unless-stopped promptpay-qr-app
+sudo docker run -d --name promptpay-qr-app -p HOST_PORT:80 --restart unless-stopped promptpay-qr-app
 ```
 
 ## Docker with Cloudflare Tunnel
@@ -507,15 +507,15 @@ Example tunnel config:
 
 ```yml
 ingress:
-  - hostname: promptpay.thiraphat.work
-    service: http://10.33.1.34:8082
+  - hostname: your-domain.example
+    service: http://SERVER_IP:HOST_PORT
   - service: http_status:404
 ```
 
 Traffic flow:
 
 ```text
-User -> promptpay.thiraphat.work -> Cloudflare Tunnel -> Docker Container -> Nginx -> Web App
+User -> your-domain.example -> Cloudflare Tunnel -> Docker Container -> Nginx -> Web App
 ```
 
 ## Benefits of Using Docker Here
