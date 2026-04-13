@@ -144,14 +144,19 @@ Docker ใช้เพื่อ:
 
 ```text
 .
+├── public/
+│   ├── index.html
+│   ├── styles.css
+│   ├── app.js
+│   ├── manifest.json
+│   └── sw.js
+├── deploy/
+│   └── nginx.conf
 ├── Dockerfile
-├── nginx.conf
 ├── .dockerignore
-├── index.html
-├── styles.css
-├── app.js
-├── manifest.json
-└── sw.js
+├── LICENSE
+├── SECURITY.md
+└── README.md
 ```
 
 ไฟล์สำคัญฝั่ง Docker มี 3 ตัว:
@@ -190,6 +195,17 @@ Docker ใช้เพื่อ:
 - build เร็วขึ้น
 - ไม่เอาไฟล์ไม่จำเป็นติดเข้า production
 
+โครงสร้างนี้แยกหน้าที่ชัดเจน:
+
+- `public/`
+  เก็บไฟล์หน้าเว็บทั้งหมดที่ Nginx จะ serve
+
+- `deploy/`
+  เก็บไฟล์ที่เกี่ยวกับ deployment และ web server config
+
+- root project
+  เก็บเอกสารหลัก เช่น `README.md`, `LICENSE`, `SECURITY.md` และไฟล์ Docker หลัก
+
 ## อธิบาย Dockerfile
 
 ไฟล์:
@@ -197,8 +213,8 @@ Docker ใช้เพื่อ:
 ```dockerfile
 FROM nginx:1.27-alpine
 
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY . /usr/share/nginx/html
+COPY deploy/nginx.conf /etc/nginx/conf.d/default.conf
+COPY public/ /usr/share/nginx/html/
 
 EXPOSE 80
 ```
@@ -216,15 +232,15 @@ EXPOSE 80
 - เหมาะกับ static site
 - ไม่ต้องติดตั้ง web server เอง
 
-### `COPY nginx.conf /etc/nginx/conf.d/default.conf`
+### `COPY deploy/nginx.conf /etc/nginx/conf.d/default.conf`
 
 เอา config Nginx ของโปรเจกต์นี้เข้าไปแทนค่า default ของ container
 
 เพื่อให้ Nginx เสิร์ฟเว็บในรูปแบบที่เราต้องการ
 
-### `COPY . /usr/share/nginx/html`
+### `COPY public/ /usr/share/nginx/html/`
 
-copy ไฟล์ทั้งหมดในโปรเจกต์เข้าไปในโฟลเดอร์เว็บของ Nginx
+copy เฉพาะไฟล์หน้าเว็บจากโฟลเดอร์ `public/` เข้าไปในโฟลเดอร์เว็บของ Nginx
 
 นั่นหมายความว่าไฟล์พวกนี้จะถูกเสิร์ฟออกมา:
 
@@ -440,7 +456,7 @@ docker run -d --name promptpay-qr-app -p 8082:80 --restart unless-stopped prompt
 ตอนพัฒนา local เราสามารถใช้:
 
 ```bash
-python3 -m http.server 8000
+python3 -m http.server -d public 8000
 ```
 
 ได้ เพราะมันง่าย
@@ -548,15 +564,15 @@ Docker มีไว้เพื่อ:
 ถ้าสนใจฝั่ง Docker ให้เริ่มอ่านตามนี้:
 
 1. `Dockerfile`
-2. `nginx.conf`
+2. `deploy/nginx.conf`
 3. `.dockerignore`
 4. วิธี build / run ใน README นี้
 
 ถ้าสนใจฝั่งหน้าเว็บค่อยอ่าน:
 
-1. `index.html`
-2. `styles.css`
-3. `app.js`
+1. `public/index.html`
+2. `public/styles.css`
+3. `public/app.js`
 
 ## อ้างอิง
 
