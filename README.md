@@ -200,7 +200,6 @@ This file tells Docker which files should not be included in the build context.
 Examples:
 
 - `.git`
-- `.codex`
 - logs
 - temporary files
 
@@ -311,7 +310,6 @@ Example:
 
 ```dockerignore
 .git
-.codex
 *.log
 *.tmp
 ```
