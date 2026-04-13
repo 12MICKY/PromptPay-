@@ -1,146 +1,149 @@
 # PromptPay QR Web App with Docker
 
-โปรเจกต์นี้เป็นเว็บแอปแบบ static ที่ถูกออกแบบให้รันผ่าน Docker ได้ง่าย
+This project is a static web app designed to be easy to run and deploy with Docker.
 
-จุดสำคัญของ README นี้คืออธิบายเรื่อง **Docker ว่าทำอะไร, ใช้ทำไม, และใช้กับโปรเจกต์นี้อย่างไร**
+The main purpose of this README is to explain Docker clearly:
+- what Docker does
+- why it is used
+- how it is applied in this project
 
-แม้ตัวเว็บจะเป็น PromptPay QR Web App แต่เอกสารนี้จะเน้นเรื่องการใช้งานและ deploy ผ่าน Docker เป็นหลัก
+Even though the app itself is a PromptPay QR web app, this document is intentionally Docker-focused.
 
-## ทดลองใช้งานเว็บ
+## Live Demo
 
-สามารถเข้าใช้งานจริงได้ที่:
+You can test the deployed application here:
 
 **https://promptpay.thiraphat.work**
 
-ลิงก์นี้เป็นตัวอย่าง deployment จริงของโปรเจกต์นี้บน server ผ่าน Docker และ Cloudflare Tunnel
+This is a real deployment of the project running on a server through Docker and Cloudflare Tunnel.
 
-## อ้างอิงเกี่ยวกับ PromptPay
+## PromptPay References
 
-โปรเจกต์นี้เป็นเว็บแอปสำหรับสร้าง QR ของ PromptPay ดังนั้นคำอธิบายและแนวคิดของระบบอ้างอิงจากข้อมูลของหน่วยงานและผู้ให้บริการที่เกี่ยวข้องกับ PromptPay โดยตรง
+This project generates PromptPay QR codes, so the overall context of the app is based on official and relevant PromptPay-related sources.
 
-สรุปสั้น ๆ จากแหล่งอ้างอิง:
+Key points from those references:
 
-- PromptPay เป็นโครงสร้างพื้นฐานการชำระเงินของประเทศไทยที่ช่วยให้โอนหรือรับเงินได้สะดวก รวดเร็ว และมีค่าธรรมเนียมต่ำลง
-- การผูกพร้อมเพย์สามารถอ้างอิงกับข้อมูลอย่างหมายเลขโทรศัพท์มือถือหรือเลขประจำตัวประชาชน
-- PromptPay เป็นส่วนหนึ่งของโครงสร้างพื้นฐานการชำระเงินดิจิทัลของไทย และยังถูกต่อยอดไปสู่บริการ QR Payment และการเชื่อมโยงการชำระเงินระหว่างประเทศ
+- PromptPay is part of Thailand’s digital payment infrastructure.
+- It allows money transfers and payments using identifiers such as a mobile phone number or a national ID number.
+- PromptPay has also been extended into QR payment and cross-border payment flows.
 
-แหล่งอ้างอิงหลัก:
+Primary references:
 
-- ธนาคารแห่งประเทศไทย: หน้าแนะนำ PromptPay  
+- Bank of Thailand: PromptPay  
   https://www.bot.or.th/th/financial-innovation/digital-finance/digital-payment/promptpay.html
 
-- สมาคมธนาคารไทย: หน้าบริการพร้อมเพย์  
+- Thai Bankers’ Association: PromptPay service  
   https://www.tba.or.th/pso-tb-cert/pso/pso-service/
 
-- ธนาคารแห่งประเทศไทย: หน้า Cross-Border Payment ที่กล่าวถึงการต่อยอดระบบ PromptPay  
+- Bank of Thailand: Cross-Border Payment  
   https://www.bot.or.th/th/financial-innovation/digital-finance/digital-payment/cross-border-payment.html
 
-หมายเหตุ:
+Notes:
 
-- README นี้อธิบาย Docker เป็นหลัก
-- ส่วนของ PromptPay ที่กล่าวถึงในเอกสารนี้เป็นการอธิบายภาพรวม เพื่อบอกว่าตัวเว็บนี้ถูกนำไปใช้กับระบบลักษณะใด
-- หากต้องการใช้งาน PromptPay ในเชิงธุรกิจหรือเชิงกฎหมาย ควรตรวจสอบข้อมูลล่าสุดจากแหล่งทางการโดยตรง
+- This README focuses mainly on Docker and deployment.
+- The PromptPay section is included to explain the real-world context in which this web app is used.
+- For business, legal, or compliance use cases, always verify the latest information directly from official sources.
 
-## Docker คืออะไร
+## What Is Docker?
 
-Docker คือเครื่องมือสำหรับทำให้แอปของเรารันอยู่ในสภาพแวดล้อมที่ถูกแพ็กไว้เป็นชุดเดียว เรียกว่า `container`
+Docker is a tool for packaging an application and its runtime environment into a portable unit called a `container`.
 
-พูดง่าย ๆ คือ:
+In simple terms:
 
-- เรามีโค้ด
-- เรามี runtime ที่ต้องใช้
-- เรามี web server ที่ต้องใช้
-- เราแพ็กรวมกันเป็น image
-- จากนั้นเอา image นั้นไปรันเป็น container ที่ไหนก็ได้
+- you have application code
+- you have the runtime environment
+- you may need a web server
+- Docker packages them together into an image
+- that image can then be run consistently on different machines
 
-แนวคิดสำคัญคือ:
+Core idea:
 
-- เขียนครั้งเดียว
-- รันได้เหมือนกันทุกเครื่อง
-- ลดปัญหา “เครื่องฉันรันได้ แต่เครื่องอื่นรันไม่ได้”
+- build once
+- run anywhere
+- reduce “it works on my machine” problems
 
-## ทำไมโปรเจกต์นี้ถึงใช้ Docker
+## Why Use Docker in This Project?
 
-แม้โปรเจกต์นี้จะเป็นเว็บ static ธรรมดา แต่การใช้ Docker มีข้อดีชัดเจน:
+Even though this project is only a static web app, Docker still provides strong practical benefits.
 
-### 1. ทำให้ deploy ง่าย
+### 1. Easier deployment
 
-แทนที่จะต้อง:
+Without Docker, you would typically need to:
 
-- ติดตั้ง Nginx เอง
-- ตั้งค่า path เอง
-- copy ไฟล์เอง
-- แก้ config เอง
+- install Nginx manually
+- configure paths manually
+- copy files manually
+- manage server configuration manually
 
-เราสามารถใช้:
+With Docker, the workflow becomes:
 
 ```bash
 docker build -t promptpay-qr-app .
 docker run -d -p 8082:80 promptpay-qr-app
 ```
 
-แล้วเว็บก็พร้อมใช้งานทันที
+That is enough to get the app running.
 
-### 2. สภาพแวดล้อมเหมือนกันทุกที่
+### 2. Consistent environment
 
-ไม่ว่าจะรันบน:
+Whether you run the app on:
 
-- เครื่อง local
-- VM
-- server จริง
-- cloud machine
+- a local machine
+- a VM
+- a dedicated server
+- a cloud instance
 
-ผลลัพธ์จะเหมือนกัน เพราะใช้ image เดียวกัน
+the result is consistent because the same Docker image is used everywhere.
 
-### 3. แยกตัวแอปออกจากเครื่องหลัก
+### 3. Isolation from the host system
 
-ตัวเว็บจะไม่ไปปนกับ system package บนเครื่อง เช่น:
+The app does not need to mix with the host machine’s packages or web server setup.
 
-- ไม่ต้องติดตั้ง Nginx ลงเครื่องโดยตรง
-- ไม่ต้องวางไฟล์เว็บปนกับเว็บอื่น
-- ไม่ต้องแก้ environment หลักของเซิร์ฟเวอร์
+For example:
 
-ทุกอย่างถูกแยกอยู่ใน container
+- no need to install Nginx directly on the host
+- no need to place files into a shared web root manually
+- no need to depend on the host’s application setup
 
-### 4. ง่ายต่อการย้ายเครื่อง
+Everything is contained in the container.
 
-ถ้าจะย้ายแอปนี้ไปอีกเครื่องหนึ่ง:
+### 4. Easier migration
 
-- copy source code
-- build docker image
-- run container
+If you need to move this app to another machine, the process is straightforward:
 
-จบ
+- copy the source code
+- build the image
+- run the container
 
-### 5. ง่ายต่อการ restart / update / rollback
+### 5. Easier updates
 
-เมื่อมีการแก้หน้าเว็บ:
+When the web app changes:
 
-- build image ใหม่
-- ลบ container เดิม
-- run container ใหม่
+- rebuild the image
+- remove the old container
+- run a new container
 
-ไม่ต้องแกะ config ระบบหลักเยอะ
+This keeps updates predictable and simple.
 
-## Docker ใช้อะไรในโปรเจกต์นี้
+## What Docker Does in This Project
 
-ในโปรเจกต์นี้ Docker ถูกใช้เพื่อ:
+In this project, Docker is used to:
 
-- แพ็กหน้าเว็บทั้งหมด
-- ใช้ Nginx เป็น web server ภายใน container
-- serve ไฟล์ `index.html`, `styles.css`, `app.js` และไฟล์ static อื่น ๆ
+- package the entire web app
+- run Nginx inside the container
+- serve static files such as `index.html`, `styles.css`, `app.js`, and related assets
 
-พูดอีกแบบคือ:
+In other words:
 
-Docker ไม่ได้ใช้สร้าง QR
+Docker is **not** used to generate QR codes.
 
-Docker ใช้เพื่อ:
+Docker is used to:
 
-- เอาเว็บขึ้นรัน
-- เสิร์ฟเว็บให้คนเข้าใช้งาน
-- ทำให้ deploy ได้ง่ายและเป็นระบบ
+- run the web app
+- serve it to users
+- make deployment repeatable and clean
 
-## โครงสร้างไฟล์ที่เกี่ยวกับ Docker
+## Project Structure
 
 ```text
 .
@@ -159,56 +162,57 @@ Docker ใช้เพื่อ:
 └── README.md
 ```
 
-ไฟล์สำคัญฝั่ง Docker มี 3 ตัว:
+This structure separates responsibilities clearly:
+
+- `public/`
+  contains the actual front-end files served by Nginx
+
+- `deploy/`
+  contains deployment-related files, especially web server configuration
+
+- project root
+  contains top-level project files such as `Dockerfile`, `README.md`, `LICENSE`, and `SECURITY.md`
+
+## Docker-Related Files
 
 ### `Dockerfile`
 
-เป็นไฟล์ที่ใช้บอก Docker ว่า:
+This file tells Docker:
 
-- จะเริ่มจาก image อะไร
-- จะ copy ไฟล์อะไรเข้า image
-- จะ expose port อะไร
+- which base image to use
+- which files to copy
+- which port the container exposes
 
-### `nginx.conf`
+### `deploy/nginx.conf`
 
-เป็น config ของ Nginx ภายใน container
+This is the Nginx configuration used inside the container.
 
-หน้าที่คือ:
+Its role is to:
 
-- รับ request HTTP
-- เสิร์ฟไฟล์เว็บ
-- ส่ง `index.html` กลับไปเมื่อเข้าหน้าหลัก
+- receive HTTP requests
+- serve the web files
+- return `index.html` for the main route
 
 ### `.dockerignore`
 
-ใช้บอก Docker ว่าไฟล์ไหนไม่ต้อง copy เข้า image
+This file tells Docker which files should not be included in the build context.
 
-เช่น:
+Examples:
 
 - `.git`
 - `.codex`
-- log file
+- logs
+- temporary files
 
-ข้อดีคือ:
+Benefits:
 
-- image เล็กลง
-- build เร็วขึ้น
-- ไม่เอาไฟล์ไม่จำเป็นติดเข้า production
+- smaller build context
+- faster builds
+- cleaner images
 
-โครงสร้างนี้แยกหน้าที่ชัดเจน:
+## Dockerfile Explained
 
-- `public/`
-  เก็บไฟล์หน้าเว็บทั้งหมดที่ Nginx จะ serve
-
-- `deploy/`
-  เก็บไฟล์ที่เกี่ยวกับ deployment และ web server config
-
-- root project
-  เก็บเอกสารหลัก เช่น `README.md`, `LICENSE`, `SECURITY.md` และไฟล์ Docker หลัก
-
-## อธิบาย Dockerfile
-
-ไฟล์:
+File:
 
 ```dockerfile
 FROM nginx:1.27-alpine
@@ -219,30 +223,28 @@ COPY public/ /usr/share/nginx/html/
 EXPOSE 80
 ```
 
-อธิบายทีละบรรทัด:
-
 ### `FROM nginx:1.27-alpine`
 
-เริ่มจาก image ของ Nginx เวอร์ชัน Alpine
+This uses the official Nginx Alpine image as the base image.
 
-เหตุผลที่ใช้:
+Why this is a good fit:
 
-- เบา
-- เร็ว
-- เหมาะกับ static site
-- ไม่ต้องติดตั้ง web server เอง
+- lightweight
+- fast
+- ideal for static sites
+- no need to install a web server manually
 
 ### `COPY deploy/nginx.conf /etc/nginx/conf.d/default.conf`
 
-เอา config Nginx ของโปรเจกต์นี้เข้าไปแทนค่า default ของ container
+This replaces the default Nginx config inside the container with the project’s own config.
 
-เพื่อให้ Nginx เสิร์ฟเว็บในรูปแบบที่เราต้องการ
+That allows the app to be served exactly the way this project expects.
 
 ### `COPY public/ /usr/share/nginx/html/`
 
-copy เฉพาะไฟล์หน้าเว็บจากโฟลเดอร์ `public/` เข้าไปในโฟลเดอร์เว็บของ Nginx
+This copies the static web app files from `public/` into the Nginx web root.
 
-นั่นหมายความว่าไฟล์พวกนี้จะถูกเสิร์ฟออกมา:
+That means Nginx will serve:
 
 - `index.html`
 - `styles.css`
@@ -252,22 +254,22 @@ copy เฉพาะไฟล์หน้าเว็บจากโฟลเด
 
 ### `EXPOSE 80`
 
-บอกว่า container นี้เปิดบริการที่ port `80`
+This declares that the container serves traffic on port `80`.
 
-ตัวอย่างเวลา run:
+Example:
 
 ```bash
 docker run -p 8082:80 promptpay-qr-app
 ```
 
-ความหมายคือ:
+Meaning:
 
-- ฝั่งเครื่อง host ใช้ port `8082`
-- ฝั่งใน container ใช้ port `80`
+- host machine uses port `8082`
+- container uses port `80`
 
-## อธิบาย nginx.conf
+## Nginx Configuration Explained
 
-ไฟล์:
+File:
 
 ```nginx
 server {
@@ -285,30 +287,27 @@ server {
 
 ### `listen 80;`
 
-Nginx รอฟัง request ที่ port `80` ภายใน container
+Nginx listens on port `80` inside the container.
 
 ### `root /usr/share/nginx/html;`
 
-กำหนดว่าไฟล์เว็บอยู่ที่โฟลเดอร์นี้
+This sets the document root for the web app files.
 
 ### `index index.html;`
 
-เมื่อผู้ใช้เข้า `/` ให้เปิด `index.html`
+When a user requests `/`, Nginx serves `index.html`.
 
 ### `try_files $uri $uri/ /index.html;`
 
-สั่งให้ Nginx ลองหาไฟล์ตาม path ก่อน
+Nginx first tries to find the requested file directly.
 
-ถ้าไม่เจอ ก็ fallback ไป `index.html`
+If it cannot find one, it falls back to `index.html`.
 
-ข้อดี:
+This is useful for simple single-page-style routing and prevents unnecessary 404 issues.
 
-- ใช้ได้ดีกับเว็บหน้าเดียว
-- ป้องกันปัญหา path แล้ว 404
+## `.dockerignore` Explained
 
-## อธิบาย .dockerignore
-
-ตัวอย่าง:
+Example:
 
 ```dockerignore
 .git
@@ -317,127 +316,143 @@ Nginx รอฟัง request ที่ port `80` ภายใน container
 *.tmp
 ```
 
-ไฟล์นี้ช่วยให้ Docker ไม่เอาไฟล์เหล่านี้เข้า build context
+This prevents unnecessary files from being sent to Docker during build.
 
-ผลลัพธ์คือ:
+Benefits:
 
-- build เร็วขึ้น
-- image สะอาดขึ้น
-- ไม่เอาข้อมูลที่ไม่จำเป็นไปด้วย
+- faster build
+- cleaner image
+- avoids shipping irrelevant local files
 
-## Docker Workflow ของโปรเจกต์นี้
+## Docker Workflow in This Project
 
-ลำดับการทำงานจริง:
+Typical workflow:
 
-1. เขียนหรือแก้ไฟล์เว็บ
-2. build docker image
-3. run docker container
-4. เปิดผ่าน browser
-5. ถ้าจะแก้ใหม่ ให้ build ใหม่แล้ว run ใหม่
+1. edit the web files
+2. build the Docker image
+3. run the container
+4. open the app in a browser
+5. rebuild and rerun when changes are made
 
-## วิธี build Docker image
+## Build the Docker Image
 
-อยู่ในโฟลเดอร์โปรเจกต์ แล้วรัน:
+From the project root:
 
 ```bash
 docker build -t promptpay-qr-app .
 ```
 
-คำอธิบาย:
+Explanation:
 
 - `docker build`
-  คือการสร้าง image
+  builds an image
 
 - `-t promptpay-qr-app`
-  ตั้งชื่อ image ว่า `promptpay-qr-app`
+  tags the image with the name `promptpay-qr-app`
 
 - `.`
-  หมายถึงใช้โฟลเดอร์ปัจจุบันเป็น build context
+  uses the current directory as the build context
 
-## วิธีรัน container
+## Run the Container
 
 ```bash
 docker run -d --name promptpay-qr-app -p 8082:80 --restart unless-stopped promptpay-qr-app
 ```
 
-อธิบาย:
+Explanation:
 
 - `-d`
-  รันแบบ background
+  runs in detached mode
 
 - `--name promptpay-qr-app`
-  ตั้งชื่อ container
+  assigns a container name
 
 - `-p 8082:80`
-  map port จากเครื่อง host ไปยัง container
+  maps host port `8082` to container port `80`
 
 - `--restart unless-stopped`
-  ถ้าเครื่อง reboot container จะกลับมารันเอง
+  restarts the container automatically unless it is explicitly stopped
 
 - `promptpay-qr-app`
-  ชื่อ image ที่จะเอามารัน
+  is the image name to run
 
-## วิธีเปิดใช้งานเว็บหลังรัน Docker
+## Access the App
 
-ถ้ารันบนเครื่องตัวเอง:
+If running locally:
 
 ```text
 http://localhost:8082
 ```
 
-ถ้ารันบน server:
+If running on a server:
 
 ```text
 http://SERVER_IP:8082
 ```
 
-ตัวอย่าง:
+Example:
 
 ```text
 http://10.33.1.34:8082
 ```
 
-## คำสั่ง Docker ที่ควรรู้
+## Run Locally Without Docker
 
-### ดู container ที่กำลังรัน
+If you just want a quick local test:
+
+```bash
+python3 -m http.server -d public 8000
+```
+
+Then open:
+
+```text
+http://localhost:8000
+```
+
+This is convenient for development, but Docker + Nginx is preferred for deployment.
+
+## Useful Docker Commands
+
+### List running containers
 
 ```bash
 docker ps
 ```
 
-### ดู image ที่มีในเครื่อง
+### List images
 
 ```bash
 docker images
 ```
 
-### หยุด container
+### Stop the container
 
 ```bash
 docker stop promptpay-qr-app
 ```
 
-### เปิด container กลับมา
+### Start the container again
 
 ```bash
 docker start promptpay-qr-app
 ```
 
-### ลบ container
+### Remove the container
 
 ```bash
 docker rm -f promptpay-qr-app
 ```
 
-### ลบ image
+### Remove the image
 
 ```bash
 docker rmi promptpay-qr-app
 ```
 
-## วิธีอัปเดตเว็บหลังแก้โค้ด
+## How to Update the Deployment
 
-ถ้ามีการแก้หน้าเว็บแล้วต้องการ deploy ใหม่:
+When the front-end changes:
 
 ```bash
 docker build -t promptpay-qr-app .
@@ -445,58 +460,52 @@ docker rm -f promptpay-qr-app
 docker run -d --name promptpay-qr-app -p 8082:80 --restart unless-stopped promptpay-qr-app
 ```
 
-แนวคิดคือ:
+This means:
 
-- สร้าง image ใหม่
-- ปิดของเก่า
-- เปิดของใหม่
+- build a new image
+- remove the old container
+- run the new container
 
-## ทำไมไม่ใช้ Python HTTP Server ใน production
+## Why Not Use Python HTTP Server in Production?
 
-ตอนพัฒนา local เราสามารถใช้:
+For quick local development, this is fine:
 
 ```bash
 python3 -m http.server -d public 8000
 ```
 
-ได้ เพราะมันง่าย
+But for production, Docker + Nginx is better because:
 
-แต่ใน production Docker + Nginx ดีกว่า เพราะ:
+- it is more stable
+- it is more appropriate for static web serving
+- port management is clearer
+- automatic restart is easier
+- deployment is cleaner and more reproducible
 
-- เสถียรกว่า
-- เหมาะกับเว็บ static จริง
-- จัดการ port และ restart ได้ง่าย
-- อยู่ใน container ชัดเจน
-- deploy บน server ได้เป็นระบบกว่า
+## Real Server Deployment Example
 
-## ตัวอย่างการใช้งานบนเซิร์ฟเวอร์จริง
+This project has already been deployed to a real server with this flow:
 
-ในโปรเจกต์นี้มีการนำไปรันบน server จริงแล้วด้วย flow แบบนี้:
+1. copy the project files to the server
+2. build the Docker image on the server
+3. run the container on port `8082`
+4. point Cloudflare Tunnel to `http://10.33.1.34:8082`
 
-1. copy ไฟล์ขึ้นเซิร์ฟเวอร์
-2. build image บน server
-3. run container ที่ port `8082`
-4. เอา Cloudflare Tunnel ชี้เข้ามาที่ `http://10.33.1.34:8082`
-
-ตัวอย่าง command:
+Example:
 
 ```bash
 sudo docker build -t promptpay-qr-app .
 sudo docker run -d --name promptpay-qr-app -p 8082:80 --restart unless-stopped promptpay-qr-app
 ```
 
-## ใช้ Docker ร่วมกับ Cloudflare Tunnel อย่างไร
+## Docker with Cloudflare Tunnel
 
-Docker ทำหน้าที่:
+In this setup:
 
-- รันเว็บแอปในเครื่องเซิร์ฟเวอร์
+- Docker runs the app on the server
+- Cloudflare Tunnel exposes it safely under a public hostname
 
-Cloudflare Tunnel ทำหน้าที่:
-
-- รับโดเมนจากภายนอก
-- ส่ง traffic มายังแอปที่รันอยู่ในเครื่อง
-
-ตัวอย่าง config:
+Example tunnel config:
 
 ```yml
 ingress:
@@ -505,89 +514,85 @@ ingress:
   - service: http_status:404
 ```
 
-ภาพรวมคือ:
+Traffic flow:
 
 ```text
 User -> promptpay.thiraphat.work -> Cloudflare Tunnel -> Docker Container -> Nginx -> Web App
 ```
 
-## ข้อดีของการใช้ Docker กับโปรเจกต์นี้
+## Benefits of Using Docker Here
 
-- setup ง่าย
-- deploy ซ้ำได้
-- แยกจากระบบหลัก
-- ใช้งานบน server ได้สะอาด
-- ย้ายเครื่องง่าย
-- อัปเดตง่าย
-- เหมาะกับ static web app มาก
+- easier setup
+- consistent deployment
+- cleaner server isolation
+- easier migration
+- easier updates
+- very suitable for static web apps
 
-## ข้อควรระวัง
+## Things to Watch Out For
 
-### 1. Docker ต้องมีสิทธิ์ใช้งาน
+### 1. Docker permissions
 
-บางเครื่อง user ปกติอาจไม่มีสิทธิ์เข้าถึง Docker socket
+On some servers, the normal user may not have permission to access the Docker socket.
 
-จึงอาจต้องใช้:
+In that case, you may need:
 
 ```bash
 sudo docker ...
 ```
 
-### 2. พอร์ตอาจชนกับ service อื่น
+### 2. Port conflicts
 
-ก่อน run ควรเช็กว่า port ที่จะใช้ยังว่าง เช่น `8082`
+Check whether the target port is already in use before running the container.
 
-### 3. ถ้าแก้ไฟล์แล้วไม่ rebuild จะไม่เห็นการเปลี่ยนแปลง
+### 3. Rebuild required after code changes
 
-เพราะ container ใช้ไฟล์จาก image ที่ build ไปแล้ว
+If you edit files but do not rebuild the image, the running container will still use the old version.
 
-ถ้าแก้โค้ด ต้อง build ใหม่
+## Summary
 
-## สรุปว่า Docker ทำอะไรในโปรเจกต์นี้
+Docker in this project is **not** responsible for generating PromptPay QR codes.
 
-Docker ในโปรเจกต์นี้ **ไม่ได้มีไว้สร้าง QR**
+Docker is used to:
 
-Docker มีไว้เพื่อ:
+- package the app
+- run the app
+- serve the app through Nginx
+- make deployment clean and repeatable
 
-- เอาเว็บทั้งก้อนไปรัน
-- เสิร์ฟเว็บผ่าน Nginx
-- ทำให้ deploy ง่าย
-- ทำให้ย้ายเครื่องง่าย
-- ทำให้ production ใช้งานได้เป็นระบบ
+Shortest summary:
 
-ถ้าจะสรุปสั้นที่สุด:
+> Docker is the packaging and runtime layer that makes this web app easy to deploy consistently on any server.
 
-> Docker คือวิธีแพ็กและรันเว็บแอปนี้ให้พร้อมใช้งานบนเครื่องไหนก็ได้ โดยไม่ต้องตั้งค่าเว็บเซิร์ฟเวอร์เองทุกครั้ง
+## Reading Order
 
-## ถ้าจะอ่านไฟล์เริ่มจากอะไร
-
-ถ้าสนใจฝั่ง Docker ให้เริ่มอ่านตามนี้:
+If you want to understand the Docker side first:
 
 1. `Dockerfile`
 2. `deploy/nginx.conf`
 3. `.dockerignore`
-4. วิธี build / run ใน README นี้
+4. the build and run commands in this README
 
-ถ้าสนใจฝั่งหน้าเว็บค่อยอ่าน:
+If you want to understand the front-end afterward:
 
 1. `public/index.html`
 2. `public/styles.css`
 3. `public/app.js`
 
-## อ้างอิง
+## References
 
-### อ้างอิงด้าน PromptPay
+### PromptPay References
 
-- ธนาคารแห่งประเทศไทย: PromptPay  
+- Bank of Thailand: PromptPay  
   https://www.bot.or.th/th/financial-innovation/digital-finance/digital-payment/promptpay.html
 
-- สมาคมธนาคารไทย: พร้อมเพย์  
+- Thai Bankers’ Association: PromptPay  
   https://www.tba.or.th/pso-tb-cert/pso/pso-service/
 
-- ธนาคารแห่งประเทศไทย: Cross-Border Payment  
+- Bank of Thailand: Cross-Border Payment  
   https://www.bot.or.th/th/financial-innovation/digital-finance/digital-payment/cross-border-payment.html
 
-### อ้างอิงด้านเทคนิค
+### Technical References
 
 - Docker Overview  
   https://docs.docker.com/get-started/docker-overview/
@@ -595,22 +600,22 @@ Docker มีไว้เพื่อ:
 - Dockerfile reference  
   https://docs.docker.com/reference/dockerfile/
 
-- Docker `build` command  
+- Docker build reference  
   https://docs.docker.com/reference/cli/docker/buildx/build/
 
-- Docker `run` command  
+- Docker run reference  
   https://docs.docker.com/reference/cli/docker/container/run/
 
-- Nginx official documentation  
+- Nginx documentation  
   https://nginx.org/en/docs/
 
 - Cloudflare Tunnel documentation  
   https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/
 
-- Cloudflare Tunnel ingress rules  
+- Cloudflare Tunnel configuration file  
   https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/configure-tunnels/local-management/configuration-file/
 
-### อ้างอิง library ที่ใช้
+### Library References
 
 - `qrcodejs`  
   https://cdnjs.com/libraries/qrcodejs
