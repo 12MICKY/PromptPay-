@@ -1,5 +1,9 @@
 # PromptPay QR Web App with Docker
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
+[![Dockerized](https://img.shields.io/badge/Docker-ready-blue.svg)](./Dockerfile)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-online-brightgreen.svg)](https://promptpay.thiraphat.work)
+
 This project is a static web app designed to be easy to run and deploy with Docker.
 
 The main purpose of this README is to explain Docker clearly:
