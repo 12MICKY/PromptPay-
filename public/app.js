@@ -5,6 +5,8 @@ const statusText = document.getElementById("statusText");
 const qrcodeContainer = document.getElementById("qrcode");
 const ownerText = document.getElementById("ownerText");
 const submitButton = form.querySelector('button[type="submit"]');
+const STATUS_READY = "พร้อมใช้งาน";
+const STATUS_LOADING = "กำลังเตรียมตัวสร้าง QR";
 
 async function clearLegacyOfflineCache() {
   if ("serviceWorker" in navigator) {
@@ -137,6 +139,10 @@ function renderQrCode(payload) {
   });
 }
 
+function isQrLibraryReady() {
+  return typeof window.QRCode !== "undefined";
+}
+
 function setStatus(message, isError = false) {
   statusText.textContent = message;
   statusText.style.color = isError ? "#ff8a80" : "#8b8685";
@@ -144,6 +150,10 @@ function setStatus(message, isError = false) {
 
 function generateQr() {
   try {
+    if (!isQrLibraryReady()) {
+      throw new Error("กำลังโหลดระบบสร้าง QR กรุณารอสักครู่");
+    }
+
     const payload = buildPromptPayPayload(targetValueInput.value, amountInput.value);
     renderQrCode(payload);
     ownerText.textContent = formatPromptPayLabel(targetValueInput.value);
@@ -155,12 +165,22 @@ function generateQr() {
   }
 }
 
+function hasRenderableInput() {
+  return Boolean(sanitizeDigits(targetValueInput.value));
+}
+
 function maybeAutoGenerate() {
   ownerText.textContent = formatPromptPayLabel(targetValueInput.value);
 
-  if (!sanitizeDigits(targetValueInput.value) || amountInput.value.trim() === "") {
+  if (!hasRenderableInput()) {
     qrcodeContainer.innerHTML = "";
-    setStatus("");
+    setStatus(STATUS_READY);
+    return;
+  }
+
+  if (!isQrLibraryReady()) {
+    qrcodeContainer.innerHTML = "";
+    setStatus(STATUS_LOADING);
     return;
   }
 
@@ -179,6 +199,15 @@ targetValueInput.addEventListener("input", () => {
 amountInput.addEventListener("input", maybeAutoGenerate);
 submitButton.classList.add("is-hidden");
 
+window.addEventListener("load", () => {
+  if (hasRenderableInput()) {
+    maybeAutoGenerate();
+  } else {
+    setStatus(STATUS_READY);
+  }
+});
+
+setStatus(STATUS_READY);
 clearLegacyOfflineCache().catch(() => {
-  setStatus("พร้อมใช้งาน");
+  setStatus(STATUS_READY);
 });
